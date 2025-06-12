@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İnteraktif Tıbbi Cihaz Teknik Şartname Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles with a mobile-first approach */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .tab-button.active {
+            border-color: #f59e0b; /* amber-500 */
+            color: #f59e0b; /* amber-500 */
+            background-color: #fffbeb; /* amber-50 */
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .device-link.active {
+            background-color: #f59e0b; /* amber-500 */
+            color: #1e293b; /* slate-800 */
+        }
+        /* Responsive Table for mobile */
+        @media (max-width: 767px) {
+            .responsive-table thead {
+                display: none;
+            }
+            .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td {
+                display: block;
+                width: 100%;
+            }
+            .responsive-table tr {
+                margin-bottom: 1rem;
+                border: 1px solid #e2e8f0;
+                border-radius: 0.5rem;
+                overflow: hidden;
+            }
+            .responsive-table td {
+                padding-left: 50%;
+                position: relative;
+                text-align: right;
+                border: none;
+            }
+            .responsive-table td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 45%;
+                padding-left: 1rem;
+                font-weight: 600;
+                text-align: left;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div id="app" class="min-h-screen md:flex">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-1/3 lg:w-1/4 bg-white border-b-2 md:border-b-0 md:border-r-2 border-slate-200 p-6">
+            <h1 class="text-2xl font-bold text-slate-900 mb-6">Tedarik Paneli</h1>
+            <nav id="device-nav">
+                <ul class="space-y-2">
+                    <!-- Device links will be populated by JS -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full md:w-2/3 lg:w-3/4 p-4 sm:p-6 md:p-10 bg-slate-100">
+            <div id="main-content-area" class="bg-white rounded-xl shadow-lg p-6 md:p-8 h-full">
+                <div id="welcome-message" class="text-center h-full flex flex-col justify-center items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h2 class="mt-4 text-xl font-semibold text-slate-800">Cihaz Analiz Raporu</h2>
+                    <p class="mt-2 text-slate-500">Lütfen soldaki menüden bir cihaz seçin.</p>
+                </div>
+                <div id="device-content" class="hidden h-full">
+                    <h2 id="device-title" class="text-2xl md:text-3xl font-bold text-slate-900 mb-2"></h2>
+                    <p class="text-slate-500 mb-6">Detaylı analiz, potansiyel tutarsızlıklar ve tedarikçi bilgileri.</p>
+                    
+                    <!-- Tabs -->
+                    <div class="border-b border-slate-200 mb-6">
+                        <nav id="device-tabs" class="flex space-x-2 sm:space-x-4 -mb-px overflow-x-auto" aria-label="Tabs">
+                            <!-- Tab buttons will be populated by JS -->
+                        </nav>
+                    </div>
+
+                    <!-- Tab Content Panels -->
+                    <div id="tab-panels">
+                        <!-- Tab content will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        const reportData = {
+            "cihaz-1": {
+                title: "Üst Düzey Monitörlü Sıcaklık Kontrol Sistemi",
+                tabs: [
+                     { 
+                        id: "bulgular", 
+                        label: "🔑 Kilit Bulgular",
+                        content: `
+                            <div class="space-y-4">
+                                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Ana Amaç</h4>
+                                    <p class="mt-1 text-slate-700">Cihaz, HIE tanılı yenidoğanların vücut sıcaklığını hassas bir şekilde kontrol ederek tedavi etmeyi amaçlamaktadır.</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 border-l-4 border-slate-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Kritik Teknik Şartlar</h4>
+                                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                                        <li><strong>Monitörizasyon:</strong> Entegre monitörde "Masimo teknoloji SpO2" kullanımı zorunludur.</li>
+                                        <li><strong>Soğutma Sıvısı:</strong> Sistemin özel sıvılar yerine "normal su" ile çalışması gerekmektedir.</li>
+                                        <li><strong>Performans:</strong> Pompa akış hızının 1,3 litre/dakika olması beklenmektedir.</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">En Önemli Riskler</h4>
+                                    <p class="mt-1 text-slate-700">Marka ve teknolojiye yönelik kısıtlayıcı ifadeler (Masimo, normal su, düşük pompa hızı) piyasadaki birçok büyük ve yetkin tedarikçiyi (örn: BD Arctic Sun) eleme riski taşımaktadır. Bu durum, rekabeti azaltabilir ve daha gelişmiş teknolojilere erişimi engelleyebilir.</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    { 
+                        id: "ozet", 
+                        label: "Teknik Özet",
+                        content: `
+                            <dl class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Amaç ve Kullanım</dt>
+                                    <dd class="mt-1 text-slate-600">Hipoksik İskemik Ensefalopati (HIE) tanılı yenidoğanların acil tedavisinde kullanılan, ısıtma ve soğutma yapabilen mikro-işlemci kontrollü sistem.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Ekran ve Arayüz</dt>
+                                    <dd class="mt-1 text-slate-600">12.1 inç, 1280x800 çözünürlüklü renkli dokunmatik ekran. Ekran kilitleme özelliği.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Monitörizasyon</dt>
+                                    <dd class="mt-1 text-slate-600">En az 5 inç ekranlı modüler hastabaşı monitörü. EKG, ısı, Masimo SpO2 ve tansiyon izleme. Sadece monitörizasyon için en az 1 saatlik batarya (2200 mAh).</dd>
+                                </div>
+                            </dl>
+                        `
+                    },
+                    { 
+                        id: "tutarSizliklar", 
+                        label: "⚠️ Potansiyel Sorunlar",
+                        content: `
+                            <ul class="list-disc list-inside space-y-4 text-slate-700">
+                                <li><strong>Modüler Monitör Belirsizliği:</strong> Modüler monitörün ana cihaza entegrasyonu (ayrı mı, birleşik mi) ve batarya durumu net değil.</li>
+                                <li><strong>Marka Kısıtlaması (Masimo SpO2):</strong> "Masimo teknoloji spo2" ifadesi, diğer eşdeğer teknolojileri eleyerek rekabeti kısıtlayabilir.</li>
+                                <li><strong>"Normal Su" Kısıtlaması:</strong> Bu ifade, termal performansı artıran özel sıvılı sistemleri dışlayabilir. "Normal su" tanımı netleştirilmeli.</li>
+                                <li><strong>Pompa Akış Hızı Farklılığı:</strong> Şartnamedeki 1,3 L/dk akış hızı, piyasadaki bazı lider modellerin (örn. Arctic Sun 5 L/dk) akış hızından önemli ölçüde farklıdır.</li>
+                            </ul>
+                        `
+                    },
+                    { 
+                        id: "iletisim", 
+                        label: "Teklif Kanalları",
+                        content: `
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse responsive-table">
+                                    <thead>
+                                        <tr class="bg-slate-50">
+                                            <th class="p-4 font-semibold">Firma Adı</th>
+                                            <th class="p-4 font-semibold">Markalar</th>
+                                            <th class="p-4 font-semibold">İletişim</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">Prizma Medikal</td>
+                                            <td data-label="Markalar" class="p-4">BD Arctic Sun, Foxxmed, Draeger (Pot.)</td>
+                                            <td data-label="İletişim" class="p-4 text-sm"><strong>Ankara:</strong> 0312 446 1332<br>info@prizmamedical.com</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">BD Türkiye</td>
+                                            <td data-label="Markalar" class="p-4">Arctic Sun</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">Doğrudan Türkiye ofisi veya ana distribütörü araştırılmalıdır.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "cihaz-2": {
+                title: "28 Kanallı Video EEG Cihazı",
+                tabs: [
+                    {
+                        id: "bulgular",
+                        label: "🔑 Kilit Bulgular",
+                        content: `
+                            <div class="space-y-4">
+                                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Ana Amaç</h4>
+                                    <p class="mt-1 text-slate-700">Video kaydı ile senkronize EEG ölçümleri yaparak nörolojik tanılamada kullanılmak üzere tasarlanmıştır.</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 border-l-4 border-slate-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Kritik Teknik Şartlar</h4>
+                                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                                        <li><strong>Kanal Yapısı:</strong> Başlıkta "28 Kanallı" dense de, şartnamede "en az 36 kanallı dijital yapı" istenmektedir.</li>
+                                        <li><strong>Yazılım Lisansı:</strong> Yazılımın kesinlikle donanım kilidi (dongle) olmadan çalışması gerekmektedir.</li>
+                                        <li><strong>Örnekleme Hızı:</strong> En az 2048 Hz örnekleme frekansı talep edilmektedir.</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">En Önemli Riskler</h4>
+                                    <p class="mt-1 text-slate-700">Şartname, dosya adından da anlaşıldığı üzere ("Neurovirtual.pdf") büyük ölçüde belirli bir markayı işaret etmektedir. Bu durum rekabeti kısıtlar. Ayrıca, istenen 2048 Hz örnekleme hızı, hedeflenen markanın (Neurovirtual) sunduğu 2000 Hz ile çelişmektedir. Kanal sayısı tanımındaki belirsizlik de bir diğer risktir.</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        id: "ozet",
+                        label: "Teknik Özet",
+                        content: `
+                            <dl class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Kanal ve Amplifikatör</dt>
+                                    <dd class="mt-1 text-slate-600">En az 36 kanallı dijital yapı. En az 23 EEG, 2 Monopolar, 2 Bipolar giriş. Örnekleme frekansı ≥2048 Hz. Ethernet bağlantısı.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Video ve Bilgisayar</dt>
+                                    <dd class="mt-1 text-slate-600">HD (1280x720) gece görüşlü IP kamera. En az Intel i5 işlemcili, 4GB RAM, 500GB SSD masaüstü PC. Veriler EDF formatına dönüştürülebilmeli.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Yazılım ve Diğer</dt>
+                                    <dd class="mt-1 text-slate-600">Yazılım, donanım kilidi (dongle) ile çalışmamalıdır. UTS kaydı zorunludur. Amplifikatör üzerinde elektrot yerleşim şeması olmalıdır.</dd>
+                                </div>
+                            </dl>
+                        `
+                    },
+                    {
+                        id: "tutarSizliklar",
+                        label: "⚠️ Potansiyel Sorunlar",
+                        content: `
+                            <ul class="list-disc list-inside space-y-4 text-slate-700">
+                                <li><strong>Marka Yönlendirmesi:</strong> Şartname dosya adı ("Neurovirtual.pdf") belirli bir markayı işaret ediyor.</li>
+                                <li><strong>Kanal Sayısı Çelişkisi:</strong> Başlık "28 Kanal" derken, şartname "36 dijital yapı" ve 27 aktif sinyal kanalı tanımlıyor.</li>
+                                <li><strong>Örnekleme Frekansı Uyuşmazlığı:</strong> İstenen 2048 Hz, hedeflenen Neurovirtual markasının 2000 Hz değeriyle uyumsuz.</li>
+                                <li><strong>Bant Genişliği Farkı:</strong> İstenen alt bant genişliği (0.01 Hz), Neurovirtual'in değerinden (1 Hz) farklı.</li>
+                                <li><strong>Bilgisayar Donanımı:</strong> Talep edilen PC konfigürasyonu, uzun süreli video EEG kayıtları için yetersiz kalabilir.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: "iletisim",
+                        label: "Teklif Kanalları",
+                        content: `
+                             <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse responsive-table">
+                                    <thead>
+                                        <tr class="bg-slate-50"><th class="p-4 font-semibold">Firma Adı</th><th class="p-4 font-semibold">Marka/Hizmet</th><th class="p-4 font-semibold">İletişim</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">HASMED Tıbbi Aksesuar</td>
+                                            <td data-label="Marka/Hizmet" class="p-4">Neurovirtual (Servis/Satış?)</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">0544 487 34 63<br>info@hasmedtibbiaksesuar.com</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">MEDİPRO / SESAN</td>
+                                            <td data-label="Marka/Hizmet" class="p-4">Nihon Kohden (Alternatif)</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">MEDİPRO: 0216 349 39 10<br>SESAN: 0232 483 50 51</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `
+                    }
+                ]
+            },
+             "cihaz-3": {
+                title: "Beyin Fonksiyon İndeksi Monitörü",
+                tabs: [
+                    {
+                        id: "bulgular",
+                        label: "🔑 Kilit Bulgular",
+                        content: `
+                            <div class="space-y-4">
+                                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Ana Amaç</h4>
+                                    <p class="mt-1 text-slate-700">Anestezi ve yoğun bakımda hastanın beyin aktivitesini ve sedasyon derinliğini izlemek.</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 border-l-4 border-slate-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Kritik Teknik Şartlar</h4>
+                                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                                        <li><strong>Ekran:</strong> En az 18 inç dokunmatik ekran.</li>
+                                        <li><strong>Yazılım Güncelleme:</strong> Kablosuz ağ üzerinden ücretsiz güncelleme taahhüdü isteniyor.</li>
+                                        <li><strong>Entegrasyon:</strong> HL7 protokolü ile hastane bilgi sistemine bağlanabilmeli.</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">En Önemli Riskler</h4>
+                                    <p class="mt-1 text-slate-700">18 inçlik ekran talebi, bu tür özel monitörler için standart dışı ve aşırı kısıtlayıcıdır; piyasadaki birçok lider markayı (Masimo, Medtronic) eleyebilir. "Tek kanal EEG" ifadesi teknik olarak belirsizdir. Ücretsiz kablosuz güncelleme taahhüdü, tüm üreticilerin sunmayacağı iddialı bir taleptir.</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        id: "ozet",
+                        label: "Teknik Özet",
+                        content: `
+                            <dl class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Ekran ve Arayüz</dt>
+                                    <dd class="mt-1 text-slate-600">En az 18 inç, 1366x768 çözünürlüklü renkli dokunmatik ekran. Türkçe dil desteği. Tek döner düğme ile kontrol.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Performans ve İzleme</dt>
+                                    <dd class="mt-1 text-slate-600">Burst Supresyonu ve Sinyal Kalitesi İndeksi (SQI) gösterimi. En az 72 saatlik trend hafızası. Geriye dönük kısa video kaydı.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Batarya ve Bağlantı</dt>
+                                    <dd class="mt-1 text-slate-600">Dahili batarya ile en az 90 dakika çalışma. HL7 uyumlu. Kablosuz yazıcı bağlantısı ve ücretsiz kablosuz yazılım güncelleme.</dd>
+                                </div>
+                            </dl>
+                        `
+                    },
+                    {
+                        id: "tutarSizliklar",
+                        label: "⚠️ Potansiyel Sorunlar",
+                        content: `
+                            <ul class="list-disc list-inside space-y-4 text-slate-700">
+                                <li><strong>Ekran Boyutu:</strong> 18 inç ekran talebi standart dışıdır ve BFI monitörleri için çok büyüktür.</li>
+                                <li><strong>"Tek Kanal EEG" Belirsizliği:</strong> Bu ifadenin teknik olarak ne anlama geldiği (hesaplama için tek kaynak mı, gösterim için mi) net değil.</li>
+                                <li><strong>Ücretsiz Güncelleme Taahhüdü:</strong> Ücretsiz ve kablosuz güncelleme taahhüdü, birçok firma için karşılanması zor bir madde olabilir.</li>
+                                <li><strong>Aksesuar Miktarı:</strong> Talep edilen 1 sensör ve 5 elektrot, başlangıç için son derece yetersizdir.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: "iletisim",
+                        label: "Teklif Kanalları",
+                        content: `
+                             <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse responsive-table">
+                                    <thead>
+                                        <tr class="bg-slate-50"><th class="p-4 font-semibold">Firma Adı</th><th class="p-4 font-semibold">Marka/Potansiyel Ürün</th><th class="p-4 font-semibold">İletişim</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">Medtronic Türkiye</td>
+                                            <td data-label="Marka/Potansiyel Ürün" class="p-4">BIS™ Monitörleri</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">0216 636 1000</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">Masimo Türkiye</td>
+                                            <td data-label="Marka/Potansiyel Ürün" class="p-4">SedLine® (Root® ile)</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">0312 219 54 38</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "cihaz-4": {
+                title: "Flexible Video Bronkoskop (5.2 mm)",
+                tabs: [
+                    {
+                        id: "bulgular",
+                        label: "🔑 Kilit Bulgular",
+                        content: `
+                            <div class="space-y-4">
+                                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Ana Amaç</h4>
+                                    <p class="mt-1 text-slate-700">Solunum yollarını görüntülemek ve biyopsi gibi girişimsel işlemler yapmak için kullanılır.</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 border-l-4 border-slate-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Kritik Teknik Şartlar</h4>
+                                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                                        <li><strong>Teknoloji:</strong> CCD/CMOS kameralı olmalı, fiber optik olmamalı.</li>
+                                        <li><strong>Boyutlar:</strong> 5.2 mm dış çap, 2.2 mm çalışma kanalı.</li>
+                                        <li><strong>Sterilizasyon:</strong> Hidrojen peroksit plazma sterilizasyonuna uygun olmalı (yeniden kullanılabilir).</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">En Önemli Riskler</h4>
+                                    <p class="mt-1 text-slate-700">Monitör için "640x480 HD ekran" tanımı çelişkilidir. "İnsersiyon kısmı 360° bükülebilir" ifadesi fiziksel olarak mümkün değildir ve netleştirilmelidir. Cihazın farklı çaplardaki diğer endoskop ve laringoskoplarla ek gereksinim olmadan çalışabilmesi talebi, piyasada bulunması çok zor, aşırı kısıtlayıcı bir özelliktir.</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        id: "ozet",
+                        label: "Teknik Özet",
+                        content: `
+                            <dl class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Görüntüleme Sistemi</dt>
+                                    <dd class="mt-1 text-slate-600">Dahili LED ışık kaynağı ve CCD kameralı. Fiber optik olmamalı. 10 inç dokunmatik ekran, 8GB dahili hafıza. HDMI ve opsiyonel Wi-Fi ile görüntü aktarımı.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">İnsersiyon Tüpü</dt>
+                                    <dd class="mt-1 text-slate-600">Dış çap 5.2 mm, çalışma kanalı 2.2 mm, çalışma uzunluğu 600 mm. Angülasyon: Yukarı ≥110°, Aşağı ≥100°.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Sterilizasyon ve Uyumluluk</dt>
+                                    <dd class="mt-1 text-slate-600">Cidex, OPA gibi solüsyonların yanı sıra Hidrojen Peroksit plazma sterilizasyonuna uygun olmalı. Farklı boyutlu skoplarla entegre çalışabilmeli.</dd>
+                                </div>
+                            </dl>
+                        `
+                    },
+                    {
+                        id: "tutarSizliklar",
+                        label: "⚠️ Potansiyel Sorunlar",
+                        content: `
+                            <ul class="list-disc list-inside space-y-4 text-slate-700">
+                                <li><strong>Monitör Çözünürlüğü:</strong> "640x480" ve "HD" tanımları birbiriyle çelişiyor.</li>
+                                <li><strong>İnsersiyon Bükülmesi:</strong> "360° bükülebilir" tanımı fiziksel olarak imkansız veya yanlış yorumlanabilir.</li>
+                                <li><strong>Çapraz Uyumluluk:</strong> Monitörün farklı tip ve boyuttaki skoplarla ek gereksinim olmadan çalışabilmesi talebi gerçekçi değil.</li>
+                                <li><strong>Sterilizasyon:</strong> Kapsamlı sterilizasyon uyumluluğu, potansiyel tedarikçi sayısını daraltabilir.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: "iletisim",
+                        label: "Teklif Kanalları",
+                        content: `
+                             <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse responsive-table">
+                                    <thead>
+                                        <tr class="bg-slate-50"><th class="p-4 font-semibold">Firma Adı</th><th class="p-4 font-semibold">Marka</th><th class="p-4 font-semibold">İletişim</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">Mega Özel / Anadolu Mega</td>
+                                            <td data-label="Marka" class="p-4">Olympus</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">Mega: megaozel.com<br>Anadolu: 0312 480 04 24</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">Endopenta Sağlık Hiz.</td>
+                                            <td data-label="Marka" class="p-4">Pentax</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">0216 317 17 00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "cihaz-5": {
+                title: "Dijital Mobil Video EEG Cihazı",
+                tabs: [
+                    {
+                        id: "bulgular",
+                        label: "🔑 Kilit Bulgular",
+                        content: `
+                            <div class="space-y-4">
+                                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Ana Amaç</h4>
+                                    <p class="mt-1 text-slate-700">Hasta odası ve yoğun bakım gibi ortamlarda kullanılabilen, taşınabilir bir video EEG sistemidir.</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 border-l-4 border-slate-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Kritik Teknik Şartlar</h4>
+                                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                                        <li><strong>Bağlantı:</strong> Amplifikatör-PC bağlantısı kesinlikle USB üzerinden olmalı, Ethernet kabul edilmez.</li>
+                                        <li><strong>Yazılım Lisansı:</strong> Yazılım koruyucu donanım kilidi (dongle) olmadan çalışmalıdır.</li>
+                                        <li><strong>Gelecek Uyumu:</strong> Sistem 256 kanala kadar upgrade edilebilir olmalıdır.</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">En Önemli Riskler</h4>
+                                    <p class="mt-1 text-slate-700">Şartname, dosya adı ("Nihon kohden.doc") ve teknik detayları (USB-only, Xenon fotik, kanal yapısı) ile tamamen Nihon Kohden markasını işaret etmektedir. Ancak en büyük çelişki, şartnamenin "dongle'sız" yazılım istemesine karşın, hedeflenen markanın bazı modellerinin dongle ile çalışmasıdır. Bu durum, ihalenin kilitlenmesine neden olabilir.</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        id: "ozet",
+                        label: "Teknik Özet",
+                        content: `
+                            <dl class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Sistem Bileşenleri</dt>
+                                    <dd class="mt-1 text-slate-600">Orijinal izolasyon transformatörü, en az 38 kanallı amplifikatör, laptop PC (≥4GB RAM, ≥1TB HDD), lazer yazıcı, gece görüşlü kamera.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Amplifikatör ve Bağlantı</dt>
+                                    <dd class="mt-1 text-slate-600">En az 25 EEG, 7 Bipolar, 4 DC, 1 SpO2, 1 CO2 girişi. Bağlantı ve güç kesinlikle USB üzerinden olmalı.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Yazılım ve Opsiyonlar</dt>
+                                    <dd class="mt-1 text-slate-600">Yazılım dongle'sız çalışmalı. 3D voltaj haritalama. Opsiyonel Xenon fotik stimülatör ve HL7 uyumlu veri yönetim sistemi.</dd>
+                                </div>
+                            </dl>
+                        `
+                    },
+                    {
+                        id: "tutarSizliklar",
+                        label: "⚠️ Potansiyel Sorunlar",
+                        content: `
+                            <ul class="list-disc list-inside space-y-4 text-slate-700">
+                                <li><strong>Marka Yönlendirmesi:</strong> Şartname, Nihon Kohden'in spesifik bir modelini tarif etmektedir.</li>
+                                <li><strong>Dongle Çelişkisi:</strong> Şartname "dongle'sız" isterken, hedeflenen markanın ürününde "dongle" özelliği listelenmektedir.</li>
+                                <li><strong>Bağlantı Kısıtlaması:</strong> "USB-only, Ethernet kabul edilmez" şartı, modern ve potansiyel olarak daha üstün Ethernet tabanlı sistemleri eler.</li>
+                                <li><strong>Fotik Lamba Teknolojisi:</strong> "Xenon lamba" şartı, yaygın ve verimli LED fotik teknolojisini devre dışı bırakır.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: "iletisim",
+                        label: "Teklif Kanalları",
+                        content: `
+                             <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse responsive-table">
+                                    <thead>
+                                        <tr class="bg-slate-50"><th class="p-4 font-semibold">Firma Adı</th><th class="p-4 font-semibold">Marka</th><th class="p-4 font-semibold">İletişim</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">MEDİPRO İç ve Dış Tic.</td>
+                                            <td data-label="Marka" class="p-4">Nihon Kohden</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">0216 349 39 10<br>Ersin Güldal: 0530 370 56 69</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">SESAN Ltd. Şti.</td>
+                                            <td data-label="Marka" class="p-4">Nihon Kohden</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">0232 483 50 51</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            "cihaz-6": {
+                title: "Serebral / Somatik Oksimetre Cihazı",
+                tabs: [
+                    {
+                        id: "bulgular",
+                        label: "🔑 Kilit Bulgular",
+                        content: `
+                            <div class="space-y-4">
+                                <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Ana Amaç</h4>
+                                    <p class="mt-1 text-slate-700">NIRS tekniği ile beyin ve diğer dokulardaki bölgesel oksijen satürasyonunu (rSO2) non-invaziv olarak izlemek.</p>
+                                </div>
+                                <div class="p-4 bg-slate-50 border-l-4 border-slate-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">Kritik Teknik Şartlar</h4>
+                                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                                        <li><strong>Sensör Teknolojisi:</strong> Çift dedektörlü olmalı ve derinlik rezolüsyonu almalı (SRS teknolojisine işaret ediyor).</li>
+                                        <li><strong>FDA Onayı:</strong> Sistemin "cerrahi sonuçları iyileştirdiğinin" FDA tarafından onaylanmış olması gibi iddialı bir talep var.</li>
+                                        <li><strong>Klinik Kanıt:</strong> Hiperkapni validasyonu, kan transfüzyonunu azalttığına dair çalışmalar gibi kapsamlı kanıtlar isteniyor.</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                                    <h4 class="font-bold text-slate-800">En Önemli Riskler</h4>
+                                    <p class="mt-1 text-slate-700">Şartname, spesifik sensör teknolojisi, preamplifikatör kablo uzunluğu ve AUC hesaplama gibi özellikleriyle neredeyse tamamen Medtronic INVOS™ sistemini tarif etmektedir. "Sonuçları iyileştirdiği" yönündeki FDA onayı talebi, standart bir onay belgesinde bulunması zor bir ifadedir ve gerçekçi olmayabilir. Bu durum, rekabeti neredeyse imkansız hale getirmektedir.</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        id: "ozet",
+                        label: "Teknik Özet",
+                        content: `
+                            <dl class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Teknoloji ve Performans</dt>
+                                    <dd class="mt-1 text-slate-600">NIRS tekniği. Yenidoğan, pediatrik ve yetişkin uyumlu. Çift dedektörlü sensör ile derinlik rezolüsyonu. AUC hesaplama.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Monitör ve Veri Yönetimi</dt>
+                                    <dd class="mt-1 text-slate-600">10.4 inç renkli ekran. Dahili batarya ile ≥20 dk çalışma. En az 4 kanal izleme. 24 saatlik trend. USB ile veri aktarımı ve analiz programı.</dd>
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-lg">
+                                    <dt class="font-semibold text-slate-700">Belgelendirme</dt>
+                                    <dd class="mt-1 text-slate-600">FDA'dan "sonuçları iyileştirme" onayı, hiperkapni validasyonu ve kan transfüzyonunu azalttığına dair klinik çalışmalar sunulmalı.</dd>
+                                </div>
+                            </dl>
+                        `
+                    },
+                    {
+                        id: "tutarSizliklar",
+                        label: "⚠️ Potansiyel Sorunlar",
+                        content: `
+                            <ul class="list-disc list-inside space-y-4 text-slate-700">
+                                <li><strong>FDA Onayı Talebi:</strong> "Sonuçları iyileştirdiği"nin FDA tarafından onaylanmış olması, standart bir onay ifadesi değildir ve karşılanması çok zordur.</li>
+                                <li><strong>Sensör Teknolojisi Yönlendirmesi:</strong> Çift dedektör ve derinlik rezolüsyonu tanımı, doğrudan Medtronic INVOS™ teknolojisine işaret ediyor.</li>
+                                <li><strong>Klinik Kanıt Yükü:</strong> İstenen kapsamlı klinik çalışma belgeleri, sadece çok büyük ve köklü üreticilerin karşılayabileceği bir yüktür.</li>
+                                <li><strong>Kablo Uzunluğu:</strong> 4.5m preamplifikatör kablo uzunluğu, spesifik bir modelin (INVOS 5100C) özelliğidir.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: "iletisim",
+                        label: "Teklif Kanalları",
+                        content: `
+                             <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse responsive-table">
+                                    <thead>
+                                        <tr class="bg-slate-50"><th class="p-4 font-semibold">Firma Adı</th><th class="p-4 font-semibold">Marka/Potansiyel Ürün</th><th class="p-4 font-semibold">İletişim</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">Medtronic Türkiye</td>
+                                            <td data-label="Marka/Potansiyel Ürün" class="p-4">INVOS™ Sistemi</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">0216 636 1000</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-200">
+                                            <td data-label="Firma Adı" class="p-4">Masimo Türkiye</td>
+                                            <td data-label="Marka/Potansiyel Ürün" class="p-4">O3® Regional Oximetry (Alternatif)</td>
+                                            <td data-label="İletişim" class="p-4 text-sm">0312 219 54 38</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `
+                    }
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const deviceNav = document.getElementById('device-nav').querySelector('ul');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const deviceContent = document.getElementById('device-content');
+            const deviceTitle = document.getElementById('device-title');
+            const deviceTabs = document.getElementById('device-tabs');
+            const tabPanels = document.getElementById('tab-panels');
+            let deviceCounter = 1;
+
+            // Populate device navigation
+            for (const deviceId in reportData) {
+                const device = reportData[deviceId];
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a href="#" data-device-id="${deviceId}" class="device-link block w-full text-left px-4 py-2 rounded-md text-slate-700 hover:bg-amber-100 hover:text-amber-800 transition-colors">${deviceCounter}. ${device.title}</a>`;
+                deviceNav.appendChild(listItem);
+                deviceCounter++;
+            }
+
+            // Handle device selection
+            deviceNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                const link = e.target.closest('.device-link');
+                if (link) {
+                    const deviceId = link.dataset.deviceId;
+                    
+                    document.querySelectorAll('.device-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    loadDeviceContent(deviceId);
+                    welcomeMessage.classList.add('hidden');
+                    deviceContent.classList.remove('hidden');
+                }
+            });
+
+            // Load content for the selected device
+            function loadDeviceContent(deviceId) {
+                const device = reportData[deviceId];
+                deviceTitle.textContent = device.title;
+
+                deviceTabs.innerHTML = '';
+                tabPanels.innerHTML = '';
+
+                device.tabs.forEach((tab, index) => {
+                    // Create tab button
+                    const tabButton = document.createElement('button');
+                    tabButton.className = 'tab-button whitespace-nowrap py-3 px-2 md:px-4 border-b-2 font-medium text-xs sm:text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300';
+                    tabButton.textContent = tab.label;
+                    tabButton.dataset.tabId = tab.id;
+                    deviceTabs.appendChild(tabButton);
+
+                    // Create tab panel
+                    const tabPanel = document.createElement('div');
+                    tabPanel.id = `panel-${tab.id}`;
+                    tabPanel.className = 'tab-content p-1';
+                    tabPanel.innerHTML = tab.content;
+                    tabPanels.appendChild(tabPanel);
+                    
+                    if (index === 0) {
+                        tabButton.classList.add('active');
+                        tabPanel.classList.add('active');
+                    }
+                });
+            }
+            
+            // Handle tab switching
+            deviceTabs.addEventListener('click', function(e) {
+                const button = e.target.closest('.tab-button');
+                if (button) {
+                    const tabId = button.dataset.tabId;
+                    
+                    deviceTabs.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    tabPanels.querySelectorAll('.tab-content').forEach(panel => panel.classList.remove('active'));
+                    document.getElementById(`panel-${tabId}`).classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
